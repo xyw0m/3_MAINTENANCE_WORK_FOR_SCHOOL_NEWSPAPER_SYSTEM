@@ -1,4 +1,4 @@
--- Existing tables (as you provided)
+
 CREATE TABLE school_publication_users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
@@ -18,7 +18,7 @@ CREATE TABLE articles (
     FOREIGN KEY (author_id) REFERENCES school_publication_users(user_id) ON DELETE CASCADE
 );
 
--- New table to store notifications for users (authors, writers, admins)
+
 CREATE TABLE notifications (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL, -- recipient of the notification
@@ -28,11 +28,11 @@ CREATE TABLE notifications (
     FOREIGN KEY (user_id) REFERENCES school_publication_users(user_id) ON DELETE CASCADE
 );
 
--- New table to track edit requests on articles
+
 CREATE TABLE edit_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     article_id INT NOT NULL,
-    requester_id INT NOT NULL, -- writer who requests the edit
+    requester_id INT NOT NULL, 
     status ENUM('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT NULL,
@@ -40,22 +40,22 @@ CREATE TABLE edit_requests (
     FOREIGN KEY (requester_id) REFERENCES school_publication_users(user_id) ON DELETE CASCADE
 );
 
--- New table to track shared edit access for writers on articles
+
 CREATE TABLE shared_article_access (
     access_id INT AUTO_INCREMENT PRIMARY KEY,
     article_id INT NOT NULL,
-    writer_id INT NOT NULL, -- writer who has edit access
+    writer_id INT NOT NULL, 
     granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE,
     FOREIGN KEY (writer_id) REFERENCES school_publication_users(user_id) ON DELETE CASCADE,
-    UNIQUE(article_id, writer_id) -- prevent duplicate access entries
+    UNIQUE(article_id, writer_id)
 );
 
--- Optional: Track deleted articles for audit/log (if you want to keep record)
+
 CREATE TABLE deleted_articles_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     article_id INT NOT NULL,
-    deleted_by INT NOT NULL, -- admin user_id who deleted
+    deleted_by INT NOT NULL,
     deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE NO ACTION,
     FOREIGN KEY (deleted_by) REFERENCES school_publication_users(user_id) ON DELETE NO ACTION
